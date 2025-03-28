@@ -2,7 +2,7 @@
 
 import os
 
-os.environ["OPENAI_API_KEY"] = "voc-639216515126677374835767814980559d06.80243505"
+os.environ["OPENAI_API_KEY"] = ""
 os.environ["OPENAI_API_BASE"] = "https://openai.vocareum.com/v1"
 
 from langchain.llms import OpenAI
