@@ -5,11 +5,9 @@ from langchain.llms import OpenAI
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import Chroma
 from langchain.chains.question_answering import load_qa_chain
-import pandas as pd
 from langchain.prompts import PromptTemplate
 os.environ["OPENAI_API_KEY"] = ""
 os.environ["OPENAI_API_BASE"] = "https://openai.vocareum.com/v1"
-
 
 # This covers project rubric: Synthetic Data Generation->Generating Real Estate Listings with an LLM
 def generate_synthetic_data(number_of_listings):
@@ -38,10 +36,10 @@ def save_synthdata():
 if __name__ == '__main__':
     # This covers project rubric: Synthetic Data Generation->Generating Real Estate Listings with an LLM
     #save_synthdata()
+    # Read synthetic listings
     loader = CSVLoader(file_path='./synthetic_listing.csv')
     loaded_listings = loader.load()
-    # Read synthetic listings
-    # Split documents in chunks
+    # Split documents in chunks for database
     splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     split_docs = splitter.split_documents(loaded_listings)
     # Define embedding class to be used in db
@@ -49,7 +47,7 @@ if __name__ == '__main__':
     # Create db with synthetic data.
     # This cover Rubric: Semantic Search->Creating a Vector Database and Storing Listings
     db = Chroma.from_documents(split_docs, embeddings)
-    # Collect user preferences
+    # Define buyer's preferences
     questions = [
         "How big do you want your house to be?",
         "What are 2 most important things for you regarding the location of the property?",
@@ -70,7 +68,7 @@ if __name__ == '__main__':
     n_interesting_listings = 5
     n_final_listings = 3
     query = f"""Based on the next conversation between an ai assistant and a human, and the real estate listings in the context.
-        Tell me which {n_final_listings} listings fit the best to the human interests extracted from the questions ans answers. Make sure you
+        Tell me which {n_final_listings} listings fit the best to the human interests extracted from the questions and answers. Make sure you
         do not paraphrase the listings, only use the information provided in the listings and take into account human preferences.
         Return the listings in descending order, where the first one is the best fit to human preferences.
         The conversation is the next one:
@@ -87,7 +85,7 @@ if __name__ == '__main__':
     interesting_listings = chain.run(input_documents=context_listings, query=query)
     with open("out_listings_before_augmentation.txt","w") as file_io:
         file_io.write(interesting_listings)
-
+    # Prompt for listings augmentation
     final_listings_query =f""" You will receive {n_final_listings} real estate listings and a conversation between an ai assistant
      and a human that provides information about the human's real state preferences. For each input listing, 
      augment it's Description and Neighborhood description, tailoring it to resonate with the human’s specific preferences.
