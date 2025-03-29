@@ -2,33 +2,50 @@
 The goal is to create a personalized experience for each buyer, making the property search process more engaging and tailored to individual preferences.
 
 # Usage instructions
+* Install requirements.txt in your conda env
+* run  ``` python HomeMatch.py```
+* Look at [out_listings_before_augmentation.txt](out_listings_before_augmentation.txt) that contains the 3 most adequate listings to buyers preferences before augmentation.
+* Look at [out_augmented_listings.txt](out_augmented_listings.txt) which contains the augmented listing.
 
-# Example outputs
+# Project Outline:
 
-### Database Query considering buyer's preferences
-['Neighborhood: Manhattan', 'Neighborhood: San Francisco', 'Neighborhood: Miami', 'Neighborhood: Seattle', 'Neighborhood: Los Angeles']
+* Function  ```generate_synthetic_data()``` generates n number of listings in csv format using llm via an langchain.llms.OpenAI object, this it is saved in a csv file for later use.
+Here are the generated listings:
 
-### Fined tunned database query with LLMs
-1. Neighborhood: Miami
-   Price: 800000
-   Bedrooms: 4
-   Bathrooms: 3
-   House Size: 250
-   Description: Contemporary waterfront home with panoramic views of the bay. This property offers a private dock, pool, and outdoor kitchen for al fresco dining.
-   Neighborhood Description: Miami is a tropical paradise known for its white sandy beaches, vibrant nightlife, and eclectic mix of cultural influences.
+| Neighborhood  |Price  |Bedrooms|Bathrooms|House Size|Description                                                                                                                                                    |Neighborhood Description                                                                                                   |
+|:--------------:|:-------:|:--------:|:---------:|:----------:|---------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
+| Brooklyn      |500000 |3       |2        |150       |Cozy and modern home located in the heart of Brooklyn. Features a spacious living room, updated kitchen, and a backyard perfect for entertaining guests.       |Brooklyn is a vibrant neighborhood known for its diverse culture, trendy cafes, and beautiful parks.                       |
+| Manhattan     |1000000|4       |3        |200       |Luxurious penthouse with stunning views of the city skyline. This home boasts high-end finishes, a private terrace, and a gourmet kitchen.                     |Manhattan is a bustling neighborhood with world-class shopping, dining, and entertainment options.                         |
+| Los Angeles   |700000 |3       |2        |180       |Charming Spanish-style home with a lush backyard oasis. This property features a detached studio perfect for a home office or guest quarters.                  |Los Angeles is a sunny neighborhood known for its beautiful beaches, celebrity sightings, and iconic landmarks.            |
+| Chicago       |400000 |2       |1        |120       |Classic brick bungalow in a quiet tree-lined street. This home features hardwood floors, a cozy fireplace, and a spacious backyard.                            |Chicago is a diverse neighborhood with a rich history, vibrant arts scene, and delicious deep-dish pizza.                  |
+| Miami         |800000 |4       |3        |250       |Contemporary waterfront home with panoramic views of the bay. This property offers a private dock, pool, and outdoor kitchen for al fresco dining.             |Miami is a tropical paradise known for its white sandy beaches, vibrant nightlife, and eclectic mix of cultural influences.|
+| San Francisco |1200000|3       |3        |220       |Modern loft-style home with soaring ceilings and abundant natural light. This property features a rooftop deck with views of the Golden Gate Bridge.           |San Francisco is a tech hub known for its iconic landmarks, hilly streets, and diverse culinary scene.                     |
+| Denver        |600000 |4       |2        |190       |Spacious ranch-style home with mountain views. This property boasts a gourmet kitchen, vaulted ceilings, and a large backyard perfect for outdoor entertaining.|Denver is a nature lover's paradise with easy access to hiking trails, ski resorts, and national parks.                    |
+| Seattle       |900000 |3       |2        |180       |Architecturally stunning home with panoramic views of the Puget Sound. Features include a gourmet kitchen, home theater, and a private hot tub.                |Seattle is a hip neighborhood known for its thriving music scene, tech industry, and lush green spaces.                    |
+| Austin        |650000 |3       |2        |160       |Quaint cottage with a wrap-around porch and a backyard oasis. This property offers a detached studio perfect for a home office or guest quarters.              |Austin is a quirky neighborhood known for its live music venues, food trucks, and outdoor festivals.                       |
+| Nashville     |750000 |4       |3        |200       |Southern-style home with a wrap-around porch and a spacious backyard. This property features a gourmet kitchen, hardwood floors, and a cozy fireplace.         |Nashville is a vibrant neighborhood known for its country music scene, delicious barbecue, and historic landmarks.         |
 
-2. Neighborhood: San Francisco
-   Price: 1200000
-   Bedrooms: 3
-   Bathrooms: 3
-   House Size: 220
-   Description: Modern loft-style home with soaring ceilings and abundant natural light. This property features a rooftop deck with views of the Golden Gate Bridge.
-   Neighborhood Description: San Francisco is a tech hub known for its iconic landmarks, hilly streets, and diverse culinary scene.
+* Once the synthetic data is generated and loaded, langchain.text_splitter.CharacterTextSplitter.split_documents is used to split the listing's dataset into smaller chunks.
+* A chroma database is created using split listings and langchain.embeddings.openai.OpenAIEmbeddings
+* A query prompt is created which contains buyers Q&A and instructions for semantic search. 
+* 5 most relevant listings are extracted by querying the database with ```chroma.cosine_similarity()```. Example output; From the table above, the 5 most relevant listings were:
+Manhattan, San Francisco,Miami, Seattle, Los Angeles. These results make sense, since my preferences were:
+  * The listing should have more than 2 bedrooms.
+  * 2 very important things are that it should be nearby the beach, a lake, or a river. Must have sunny weather.
+  * Should have a terrace and a nice kitchen.
+  * Bike friendly, well connected with the highway
+  * A balance between suburban tranquility and access to urban amenities like restaurants and theaters.
 
-3. Neighborhood: Los Angeles
-   Price: 700000
-   Bedrooms: 3
-   Bathrooms: 2
-   House Size: 180
-   Description: Charming Spanish-style home with a lush backyard oasis. This property features a detached studio perfect for a home office or guest quarters.
-   Neighborhood Description: Los Angeles is a sunny neighborhood known for its beautiful beaches, celebrity sightings, and iconic landmarks.
+* Previous listings are used as context, and prompt is input to ```langchain.chains.question_answering.load_qa_chain.run()```. The prompt instructs llm to refine the search by extract the 3 most relevant listings from the context, taking into acoount buyer's preferences.
+* LLM is used to augment 3 most relevant listings which were Miami, San Francisco and Los Angeles; which make sense regarding my preferences.
+* Finally the listings are augmented using llm. The next table compares the listings before and after augmentation:
+
+| Comment                  | Neighborhood   | Description                                                                                                                                                                                                                   | Neighborhood Description                                                                                                           |
+|--------------------------|----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| Before Augmentation      | Miami          | Contemporary waterfront home with panoramic views of the bay. This property offers a private dock, pool, and outdoor kitchen for al fresco dining.                                                                             | Miami is a tropical paradise known for its white sandy beaches, vibrant nightlife, and eclectic mix of cultural influences.     |
+| After Augmentation       | Miami          | Contemporary waterfront home with panoramic views of the bay. This property offers a private dock, pool, and outdoor kitchen for al fresco dining. With more than 2 bedrooms, this spacious home is perfect for your needs. Enjoy the sunny weather and nearby beach access from the comfort of your own private oasis. | Miami is a tropical paradise known for its white sandy beaches, vibrant nightlife, and eclectic mix of cultural influences. Experience the perfect balance between suburban tranquility and urban amenities in this vibrant city. |
+| Before Augmentation      | San Francisco   | Modern loft-style home with soaring ceilings and abundant natural light. This property features a rooftop deck with views of the Golden Gate Bridge.                                                                             | San Francisco is a tech hub known for its iconic landmarks, hilly streets, and diverse culinary scene.                          |
+| After Augmentation       | San Francisco   | Modern loft-style home with soaring ceilings and abundant natural light. This property features a rooftop deck with views of the Golden Gate Bridge. The sunny weather and nearby beach access make this property a dream come true. Enjoy cooking in the well-equipped kitchen and relaxing on the terrace with stunning views. | San Francisco is a tech hub known for its iconic landmarks, hilly streets, and diverse culinary scene. Experience the best of both worlds with suburban tranquility and easy access to urban amenities like restaurants and theaters. |
+| Before Augmentation      | Los Angeles    | Charming Spanish-style home with a lush backyard oasis. This property features a detached studio perfect for a home office or guest quarters.                                                                                  | Los Angeles is a sunny neighborhood known for its beautiful beaches, celebrity sightings, and iconic landmarks.                  |
+| After Augmentation       | Los Angeles    | Charming Spanish-style home with a lush backyard oasis. This property features a detached studio perfect for a home office or guest quarters. With more than 2 bedrooms, this cozy home is ideal for your needs. Enjoy the sunny weather and nearby beach access while entertaining guests on the terrace. | Los Angeles is a sunny neighborhood known for its beautiful beaches, celebrity sightings, and iconic landmarks. Live in a peaceful suburban setting with easy access to urban amenities like restaurants and theaters. |
+

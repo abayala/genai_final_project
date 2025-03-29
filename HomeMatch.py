@@ -78,13 +78,13 @@ if __name__ == '__main__':
         """
     # This cover project rubric: Semantic Search->Semantic Search of Listings Based on Buyer Preferences
     # Query database for listings similar to buyer's preferences.
-    similar_listings = db.similarity_search(query, k=n_interesting_listings)
+    context_listings = db.similarity_search(query, k=n_interesting_listings)
     #print([doc.page_content.split("\n")[0] for doc in similar_listings])
     prompt = PromptTemplate(template="{query}\nContext: {context}",input_variables=["query", "context"])
     chain = load_qa_chain(llm, prompt=prompt, chain_type="stuff")
     # This cover project rubric: Semantic Search->Semantic Search of Listings Based on Buyer Preferences
     # Refine search with llm
-    interesting_listings = chain.run(input_documents=similar_listings, query=query)
+    interesting_listings = chain.run(input_documents=context_listings, query=query)
     with open("out_listings_before_augmentation.txt","w") as file_io:
         file_io.write(interesting_listings)
 
