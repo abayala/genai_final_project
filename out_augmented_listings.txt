@@ -1,0 +1,23 @@
+1. Neighborhood: Miami
+   Price: 800000
+   Bedrooms: 4
+   Bathrooms: 3
+   House Size: 250
+   Description: Contemporary waterfront home with panoramic views of the bay. This property offers a private dock, pool, and outdoor kitchen for al fresco dining. With more than 2 bedrooms, this spacious home is perfect for your needs. Enjoy the sunny weather and nearby beach access from the comfort of your own private oasis.
+   Neighborhood Description: Miami is a tropical paradise known for its white sandy beaches, vibrant nightlife, and eclectic mix of cultural influences. Experience the perfect balance between suburban tranquility and urban amenities in this vibrant city.
+
+2. Neighborhood: San Francisco
+   Price: 1200000
+   Bedrooms: 3
+   Bathrooms: 3
+   House Size: 220
+   Description: Modern loft-style home with soaring ceilings and abundant natural light. This property features a rooftop deck with views of the Golden Gate Bridge. The sunny weather and nearby beach access make this property a dream come true. Enjoy cooking in the well-equipped kitchen and relaxing on the terrace with stunning views.
+   Neighborhood Description: San Francisco is a tech hub known for its iconic landmarks, hilly streets, and diverse culinary scene. Experience the best of both worlds with suburban tranquility and easy access to urban amenities like restaurants and theaters.
+
+3. Neighborhood: Los Angeles
+   Price: 700000
+   Bedrooms: 3
+   Bathrooms: 2
+   House Size: 180
+   Description: Charming Spanish-style home with a lush backyard oasis. This property features a detached studio perfect for a home office or guest quarters. With more than 2 bedrooms, this cozy home is ideal for your needs. Enjoy the sunny weather and nearby beach access while entertaining guests on the terrace.
+   Neighborhood Description: Los Angeles is a sunny neighborhood known for its beautiful beaches, celebrity sightings, and iconic landmarks. Live in a peaceful suburban setting with easy access to urban amenities like restaurants and theaters.

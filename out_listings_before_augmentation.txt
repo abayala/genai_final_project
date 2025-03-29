@@ -1,14 +1,5 @@
-# Personalized Real Estate Agent
-The goal is to create a personalized experience for each buyer, making the property search process more engaging and tailored to individual preferences.
+Based on the human preferences extracted from the conversation, the best 3 listings would be:
 
-# Usage instructions
-
-# Example outputs
-
-### Database Query considering buyer's preferences
-['Neighborhood: Manhattan', 'Neighborhood: San Francisco', 'Neighborhood: Miami', 'Neighborhood: Seattle', 'Neighborhood: Los Angeles']
-
-### Fined tunned database query with LLMs
 1. Neighborhood: Miami
    Price: 800000
    Bedrooms: 4
